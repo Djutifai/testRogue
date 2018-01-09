@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace First_try_in_game
+{
+    class Player
+    {
+        private int playerX;
+        private int playerY;
+        private int attack;
+        private int defense;
+        private int health;
+        private int level;
+        private char tile;
+        private int xp;
+        public Player(int level, int attack, int defense, int health, int xp)
+        {
+            tile = '@';
+            this.level = level;
+            this.attack = attack;
+            this.defense = defense;
+            this.health = health;
+            this.xp = xp;
+            playerX = 0;
+            playerY = 0;
+        }
+        public char Move()
+        {
+            return tile;
+        }
+    }
+}
