@@ -1,0 +1,33 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace First_try_in_game
+{
+    class Enemy
+    {
+        private int attack;
+        private int defense;
+        private int health;
+        private string name;
+        private int level;
+        private char tile;
+        private int xp;
+        public Enemy(string name, char tile, int level, int attack, int defense, int health, int xp)
+        {
+            this.name = name;
+            this.tile = tile;
+            this.level = level;
+            this.attack = attack;
+            this.defense = defense;
+            this.health = health;
+            this.xp = xp;
+        }
+        public char Spawn()
+        {
+            return tile;
+        }
+    }
+}
