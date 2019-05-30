@@ -28,3 +28,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/windows
+/.vs/game/v15
+
+bin/
+obj/
