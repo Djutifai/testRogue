@@ -33,16 +33,15 @@ namespace game
         }
         private void Check(int x, int y, XY xy, Dungeon dung, Player player)
         {
-            if (dung.CheckImage(player.getX()+x,player.getY()+y)=='r')
+            if (dung.CheckImage(player.X+x,player.Y+y)=='r')
             {
-                player.Attack(dung.GiveObject(player.getX() + x, player.getY() + y));
+                player.Attack(dung.GiveObject(player.X + x, player.Y + y));
             }
-            else if (dung.CheckImage(player.getX() + x, player.getY() + y) !='#' )
+            else if (dung.CheckImage(player.X + x, player.Y + y) !='#' )
             {
-                dung.Change(player.getX(), player.getY(), dung.CheckImage(player.getX() + x, player.getY() + y),0);
-                
+                dung.Change(player.X, player.Y, dung.CheckImage(player.X + x, player.Y + y),0);
                 xy.AddTo(x, y);
-                dung.Change(player.getX(), player.getY(), player.Image,1);
+                dung.Change(player.X, player.Y, player.Image,1);
             }
         }
     }

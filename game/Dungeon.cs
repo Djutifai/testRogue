@@ -15,6 +15,7 @@ namespace game
         private XY _empty = new XY(' ');
         private bool _isWorking = true;
         private XY[,] _mapcoordinates;
+        private SolidTiles[,] _map;
         Movement movement = new Movement();
         private XY _tempXY;
         private Enemy _rat;
@@ -27,6 +28,7 @@ namespace game
             Console.Clear();
             _height = height+2;
             _width = width+2;
+            _map = new SolidTiles[_height, _width];
             _mapcoordinates = new XY[_height, _width];
             RoomGen();
         }
@@ -38,27 +40,29 @@ namespace game
             {
                 for (int j = 0; j < _width; j++)
                 {
-                    
+
                     if (i == 0 || i == _height - 1)
                     {
-                          
-                          _mapcoordinates[i, j] = new XY(i, j,_wall.Image);
+
+                        _map[i, j] = SolidTiles.Wall;
                     }
                     else if (i != 0 && i != _height - 1)
                     {
-                        if (j != 0 && j != _width - 1) { _mapcoordinates[i, j] = new XY(i, j, _empty.Image); }
-                        else { _mapcoordinates[i, j] = new XY(i, j, _wall.Image); }
+                        if (j != 0 && j != _width - 1) { _map[i, j] = SolidTiles.Floor; }
+                        else { _map[i, j] = SolidTiles.Wall; }
 
                     }
+                    else Console.WriteLine("Error");
                     
                 }
             }
-            PlayerSpawn();
+           PlayerSpawn();
             
             while (_isWorking)
             {
                 Print();
-                PlayerMove();
+                Console.ReadLine();
+             //   PlayerMove();
                 Console.Clear();
             }
         }
@@ -66,12 +70,18 @@ namespace game
         {
             for (int i = 0; i < _height; i++)
                 for (int j = 0; j < _width; j++)
-                     if (j != _width - 1)
-                        Console.Write(_mapcoordinates[i, j].GetImage());
+                    if (j != _width - 1)
+                    {
+                        if (_map[i, j] == SolidTiles.Wall) Console.Write('#');
+                        else if (_map[i, j] == SolidTiles.Floor) Console.Write(' ');
+                    }
+
                     else if (j == _width - 1)
-                        Console.WriteLine(_mapcoordinates[i, j].GetImage());
-            Console.WriteLine("Your hp: {0}", _player.Atk);
-            Console.WriteLine("Rat hp: {0}", _rat.Hp);
+                    {
+                        Console.WriteLine('#');
+                    }
+            //Console.WriteLine("Your hp: {0}", _player.Hp);
+      //      Console.WriteLine("Rat hp: {0}", _rat.Hp);
         }
         private void PlayerMove()
         {
@@ -101,13 +111,16 @@ namespace game
         {
             _player = new Player((_height / 2)-1, (_width / 2)-1);
             _mapcoordinates[(_height / 2)-1, (_width / 2)-1] = _player.GetCoordinates();
-            _mapcoordinates[_player.getX(), _player.getY()].Creature(_player);
-            _rat = new Enemy(_player.getX() - 1, _player.getY() - 1, "big ass rat", 7, 3, 0, 'r');
-            _mapcoordinates[_rat.getX(), _rat.getY()].SetImage(_rat.Image);
+            _mapcoordinates[_player.X, _player.Y].Creature(_player);
+           /* _rat = new Enemy(_player.X - 1, _player.Y - 1, "big ass rat", 7, 3, 2, 'r');
+            _mapcoordinates[_rat.X, _rat.Y] = _rat.GetCoordinates();
+            _mapcoordinates[_rat.X, _rat.Y].Creature(_rat);
+            _mapcoordinates[_rat.X, _rat.Y].Tile=_rat.Image;
+            */
         }
         public void Change(int x,int y,char ch,int t)
         {
-            _mapcoordinates[x,y].SetImage(ch);
+            _mapcoordinates[x, y].Tile = ch;
             Dead(x, y, t);
             
         }     

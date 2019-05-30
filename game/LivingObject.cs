@@ -29,14 +29,8 @@ namespace game
         {
             return being;
         }
-        public int getX()
-        {
-            return being.X;
-        }
-        public int getY()
-        {
-            return being.Y;
-        }
+        public int X => being.X;
+        public int Y => being.Y;
         private void Die()
         {
             //being.Die();

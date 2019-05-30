@@ -25,13 +25,10 @@ namespace game
             Image = image;
             IsAlive = false;
         }
-        public char GetImage()
+        public char Tile
         {
-            return Image;   
-        }
-        public void SetImage(char img)
-        {
-            Image = img;
+            get => Image;
+            set => Image = value;
         }
         public void SetCoordinate(int x,int y)
         {
