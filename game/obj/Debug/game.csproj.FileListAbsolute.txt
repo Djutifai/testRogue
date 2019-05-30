@@ -1,0 +1,7 @@
+C:\Users\AZhda\OneDrive\Рабочий стол\programming\try it out's\game\game\bin\Debug\game.exe.config
+C:\Users\AZhda\OneDrive\Рабочий стол\programming\try it out's\game\game\bin\Debug\game.exe
+C:\Users\AZhda\OneDrive\Рабочий стол\programming\try it out's\game\game\bin\Debug\game.pdb
+C:\Users\AZhda\OneDrive\Рабочий стол\programming\try it out's\game\game\obj\Debug\game.csprojAssemblyReference.cache
+C:\Users\AZhda\OneDrive\Рабочий стол\programming\try it out's\game\game\obj\Debug\game.csproj.CoreCompileInputs.cache
+C:\Users\AZhda\OneDrive\Рабочий стол\programming\try it out's\game\game\obj\Debug\game.exe
+C:\Users\AZhda\OneDrive\Рабочий стол\programming\try it out's\game\game\obj\Debug\game.pdb
