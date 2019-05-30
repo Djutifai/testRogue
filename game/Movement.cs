@@ -33,15 +33,15 @@ namespace game
         }
         private void Check(int x, int y, XY xy, Dungeon dung, Player player)
         {
-            if (dung.CheckImage(player.X+x,player.Y+y)=='r')
+           /* пока думаю как реализовать атаку, завтра доделаю, скорее всего попробую сделать проверку на тайл, если он занят чем-то, типа на полу есть дверь, то будет
+             выполняться метод взаимодействия и там уже будет смотреться чё за объект и производить атаку/открытие и т.д.
+             if (dung.CreatureCheck(x,y))
             {
                 player.Attack(dung.GiveObject(player.X + x, player.Y + y));
-            }
-            else if (dung.CheckImage(player.X + x, player.Y + y) !='#' )
+            }*/
+             if (dung.CheckTile(player.X + x, player.Y + y) !=SolidTiles.Wall )
             {
-                dung.Change(player.X, player.Y, dung.CheckImage(player.X + x, player.Y + y),0);
                 xy.AddTo(x, y);
-                dung.Change(player.X, player.Y, player.Image,1);
             }
         }
     }
