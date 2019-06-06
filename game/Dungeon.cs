@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,7 @@ namespace game
             _width = width+2;
             _map = new SolidTiles[_height, _width];
             _mapcoordinates = new XY[_height, _width];
+            
             RoomGen();
         }
         private void RoomGen()
@@ -52,6 +53,8 @@ namespace game
 
                     }
                     else Console.WriteLine("Error");
+                    _mapcoordinates[i, j] = new XY(' ');
+                    _mapcoordinates[i, j].Creature(0);
                     
                 }
             }
@@ -106,20 +109,23 @@ namespace game
         {
             _player = new Player((_height / 2)-1, (_width / 2)-1);
             _mapcoordinates[(_height / 2)-1, (_width / 2)-1] = _player.GetCoordinates();
-            _mapcoordinates[_player.X, _player.Y].Creature(_player);
-            _rat = new Enemy(_player.X - 1, _player.Y , "big ass rat", 7, 3, 2, 'r');
+            _mapcoordinates[_player.X, _player.Y].Creature(_player,1);
+            _rat = new Enemy(_player.X - 1, _player.Y , "big ass rat", 7, 5, 2, 'r');
             _mapcoordinates[_rat.X, _rat.Y] = _rat.GetCoordinates();
-            _mapcoordinates[_rat.X, _rat.Y].Creature(_rat);
+            _mapcoordinates[_rat.X, _rat.Y].Creature(_rat,1);
             _mapcoordinates[_rat.X, _rat.Y].Tile=_rat.Image;
             
         }
-        public void Change(int x,int y,char ch)
+       public void Change(int x,int y)
         {
-            _mapcoordinates[x, y].Tile = ch;
+            if (_mapcoordinates[x, y].IsAlive == true) _mapcoordinates[x, y].IsAlive = false;
+            else if (_mapcoordinates[x, y].IsAlive == false) _mapcoordinates[x, y].IsAlive = true;
+            else Console.WriteLine("Error in changing");
             
+
         }     
         public bool CreatureCheck(int x,int y)
-        {
+        { 
             if (_mapcoordinates[x, y].IsAlive)
                 return true;
             else return false;
@@ -127,6 +133,10 @@ namespace game
         public bool GetStatus(int x,int y)
         {
             return _mapcoordinates[x, y].IsAlive;
+        }
+        public void GameOver()
+        {
+            _isWorking = false;
         }
     }
 }
