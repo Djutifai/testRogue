@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +13,7 @@ namespace game
         public int Atk { get; set; }
         public int Arm { get; set; }
         public char Image { get; set; }
-        public XY being;
+        protected XY being;
         public LivingObject (string name,int hp,int attack,int armor,char image)
         {
             Name = name;
@@ -31,9 +31,9 @@ namespace game
         }
         public int X => being.X;
         public int Y => being.Y;
-        private void Die()
+        public void Die()
         {
-            //being.Die();
+            being.IsAlive = false;
         }
         public void Attack (LivingObject enemy)
         {
