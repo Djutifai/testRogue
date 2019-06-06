@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,10 +40,20 @@ namespace game
             X += x;
             Y += y;
         }
-        public void Creature(LivingObject creature)
+        public void Creature(LivingObject creature,int x)
         {
             this.creature = creature;
             Image = this.creature.Image;
+            if (x == 1) IsAlive = true;
+            else if (x == 0) IsAlive = false;
+            else Console.Write("Error");
+        }
+        public void Creature(int x)
+        {
+            creature = new LivingObject();
+            Image = ' ';
+            if (x == 0) IsAlive = false;
+            else Console.Write("Error");
         }
         public LivingObject GetCreature()
         {
