@@ -41,11 +41,7 @@ namespace game
                 player.Attack(dung.GiveObject(player.X + x, player.Y + y));
                 if (player.Hp <= 0) dung.GameOver();
                 
-                else if(_livingobj.Hp<=0)
-                {
-                    _livingobj.Die();
-                    Move(x, y, xy, dung);
-                }
+                
             }
             else if (dung.CheckTile(player.X + x, player.Y + y) != SolidTiles.Wall)
             {

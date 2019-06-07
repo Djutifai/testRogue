@@ -23,6 +23,10 @@ namespace game
             _move.Move(being, dung, this);
         }
         
+        public bool IsAlive()
+        {
+            return being.IsAlive;
+        }
         
     }
 }

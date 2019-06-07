@@ -43,7 +43,7 @@ namespace game
         public void Creature(LivingObject creature,int x)
         {
             this.creature = creature;
-            Image = this.creature.Image;
+            Image = creature.Image;
             if (x == 1) IsAlive = true;
             else if (x == 0) IsAlive = false;
             else Console.Write("Error");
@@ -58,6 +58,11 @@ namespace game
         public LivingObject GetCreature()
         {
             return creature;
+        }
+        public void Die()
+        {
+            IsAlive = false;
+            Image = ' ';
         }
 
     }

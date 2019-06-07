@@ -18,7 +18,8 @@ namespace game
             being = new XY(x, y, image)
             {
                 IsAlive = true
-            };
+            };  
         }
+       
     }
 }

@@ -31,23 +31,13 @@ namespace game
         }
         public int X => being.X;
         public int Y => being.Y;
-        public void Die()
-        {
-            being.IsAlive = false;
-        }
+
         public void Attack (LivingObject enemy)
         {
             if (enemy.Arm < Atk)
                 enemy.Hp = enemy.Hp + enemy.Arm - Atk;
-            if (enemy.Hp != 0)
-            {
-                if (enemy.Atk > Arm)
-                    Hp = Hp + Arm - enemy.Atk;
-            }
-            else
-            {
-
-            }
+            if (enemy.Hp <= 0)
+                enemy.being.Die();
         }
     }
 }

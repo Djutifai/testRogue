@@ -17,8 +17,16 @@ namespace game
         private XY[,] _mapcoordinates;
         private SolidTiles[,] _map;
         Movement movement = new Movement();
-        private Enemy _rat;
-        public void Start()
+        private Random rand = new Random();
+        private Enemy[] enemies = new Enemy[3];
+        private readonly string[] enemyname = new string[] { "rat", "spider", "zombie" };
+        private readonly int[] enemyhp = new int[] { 3, 4, 6 };
+        private readonly int[] enemyatk = new int[] { 4, 3, 2 };
+        private readonly int[] enemyarm = new int[] { 1, 1, 3 };
+        private readonly char[] enemyimage = new char[] { 'r', 's', 'z' };
+        
+
+        public void Start() // Initializing
         {
             Console.Write("Choose the height of our dungeon: ");
             int height = Convert.ToInt32(Console.ReadLine());
@@ -31,8 +39,11 @@ namespace game
             _mapcoordinates = new XY[_height, _width];
             
             RoomGen();
+            
+            EnemyGen(rand.Next(2));
+          
         }
-        private void RoomGen()
+        private void RoomGen() // generation of a room
         {
             
             
@@ -60,19 +71,45 @@ namespace game
             }
            PlayerSpawn();
             
-            while (_isWorking)
+            while (_isWorking) // game loop
             {
                 Print();
                 PlayerMove();
                 Console.Clear();
             }
         }
-        private void Print()
+        private void EnemyGen(int x) // generating random amount of enemies (right now there are 3 type of an enemy)
+        {
+
+            for (int j = 0; j <= x; j++)
+            {
+
+
+                enemies[j] = new Enemy(_player.X + (j + 2), _player.Y + (j + 1), enemyname[j], enemyhp[j], enemyatk[j], enemyarm[j], enemyimage[j]);
+                _mapcoordinates[enemies[j].X, enemies[j].Y] = enemies[j].GetCoordinates();
+                _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j], 1);
+            }  
+            
+            
+        }
+      
+        private void Print() // printing the dungeon
         {
             for (int i = 0; i < _height; i++)
+            {
                 for (int j = 0; j < _width; j++)
-                    if (i == _player.X && j == _player.Y) Console.Write(_player.Image);
-                    else if (i == _rat.X && j == _rat.Y) Console.Write(_rat.Image);
+                {
+                    
+                    if (i == _player.X && j == _player.Y) Console.Write(_player.Image); 
+
+
+                    else if (_mapcoordinates[i, j].IsAlive==true)
+                        foreach(Enemy enemy in enemies)
+                        {
+                            if (i == enemy.X && j == enemy.Y) Console.Write(enemy.Image);
+                            else Console.WriteLine("Error");
+                        }
+
                     else if (j != _width - 1)
                     {
                         if (_map[i, j] == SolidTiles.Wall) Console.Write('#');
@@ -83,10 +120,12 @@ namespace game
                     {
                         Console.WriteLine('#');
                     }
-             Console.WriteLine("Your hp: {0}", _player.Hp);
-             Console.WriteLine("Rat hp: {0}", _rat.Hp);
+                    
+                }
+            }
+            Console.WriteLine("Your hp: {0}", _player.Hp);
         }
-        private void PlayerMove()
+        private void PlayerMove() // movement
         {
             _player.Move(this);         
         }
@@ -94,7 +133,7 @@ namespace game
         {
             return _map[x, y];
         }
-        public void Dead(int x,int y,int t)
+        public void Dead(int x,int y,int t) //changing alive status of the tile
         {
             if (t == 1)
                 _mapcoordinates[x, y].IsAlive = true;
@@ -105,15 +144,12 @@ namespace game
         {
             return _mapcoordinates[x, y].GetCreature();
         }
-        private void PlayerSpawn()
+        private void PlayerSpawn()// spawn a player at the center of a map
         {
             _player = new Player((_height / 2)-1, (_width / 2)-1);
             _mapcoordinates[(_height / 2)-1, (_width / 2)-1] = _player.GetCoordinates();
             _mapcoordinates[_player.X, _player.Y].Creature(_player,1);
-            _rat = new Enemy(_player.X - 1, _player.Y , "big ass rat", 7, 5, 2, 'r');
-            _mapcoordinates[_rat.X, _rat.Y] = _rat.GetCoordinates();
-            _mapcoordinates[_rat.X, _rat.Y].Creature(_rat,1);
-            _mapcoordinates[_rat.X, _rat.Y].Tile=_rat.Image;
+            
             
         }
        public void Change(int x,int y)
@@ -136,6 +172,17 @@ namespace game
         }
         public void GameOver()
         {
+            if (_player.IsAlive())
+            {
+                Console.Clear();
+                Console.WriteLine("Congratulations, you have won!");
+            }
+            else if (!_player.IsAlive())
+            {
+                Console.Clear();
+                Console.WriteLine("Sorry, you have died :(");
+            }
+            Console.ReadLine();
             _isWorking = false;
         }
     }
