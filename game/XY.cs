@@ -13,9 +13,8 @@ namespace game
         public char Image { get; set; }
         public bool IsAlive { get; set; }
         private LivingObject creature;
-        public XY(char image)
+        public XY()
         {
-            Image = image;
             IsAlive = false;
         }
         public XY(int x, int y,char image)

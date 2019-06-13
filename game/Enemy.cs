@@ -20,6 +20,15 @@ namespace game
                 IsAlive = true
             };  
         }
+        public bool Check()
+        {
+            return being.IsAlive;
+        }
+        public void Die()
+        {
+            being.Die();
+            
+        }
        
     }
 }

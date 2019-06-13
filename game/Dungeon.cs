@@ -8,23 +8,22 @@ namespace game
 {
     class Dungeon
     {
-        private Player _player; 
-        private int _height;
-        private int _width;
-        private XY _wall = new XY ('#');
-        private XY _empty = new XY(' ');
+        private Player _player;
+        private int _height, _width;
+        private XY _wall = new XY ();
+        private XY _empty = new XY();
         private bool _isWorking = true;
         private XY[,] _mapcoordinates;
         private SolidTiles[,] _map;
-        Movement movement = new Movement();
+        //Movement movement = new Movement();
         private Random rand = new Random();
-        private Enemy[] enemies = new Enemy[3];
+        private byte temp;
+        private Enemy[] enemies;
         private readonly string[] enemyname = new string[] { "rat", "spider", "zombie" };
         private readonly int[] enemyhp = new int[] { 3, 4, 6 };
         private readonly int[] enemyatk = new int[] { 4, 3, 2 };
         private readonly int[] enemyarm = new int[] { 1, 1, 3 };
         private readonly char[] enemyimage = new char[] { 'r', 's', 'z' };
-        
 
         public void Start() // Initializing
         {
@@ -37,12 +36,9 @@ namespace game
             _width = width+2;
             _map = new SolidTiles[_height, _width];
             _mapcoordinates = new XY[_height, _width];
-            
-            RoomGen();
-            
-            EnemyGen(rand.Next(2));
-          
+            RoomGen();      
         }
+
         private void RoomGen() // generation of a room
         {
             
@@ -64,13 +60,12 @@ namespace game
 
                     }
                     else Console.WriteLine("Error");
-                    _mapcoordinates[i, j] = new XY(' ');
-                    _mapcoordinates[i, j].Creature(0);
-                    
+                    _mapcoordinates[i, j] = new XY();
                 }
             }
            PlayerSpawn();
-            
+           EnemyGen(rand.Next(5)+1);
+
             while (_isWorking) // game loop
             {
                 Print();
@@ -78,14 +73,15 @@ namespace game
                 Console.Clear();
             }
         }
+
         private void EnemyGen(int x) // generating random amount of enemies (right now there are 3 type of an enemy)
         {
-
-            for (int j = 0; j <= x; j++)
+            enemies = new Enemy[x];
+            
+            for (int j = 0; j < x; j++)
             {
-
-
-                enemies[j] = new Enemy(_player.X + (j + 2), _player.Y + (j + 1), enemyname[j], enemyhp[j], enemyatk[j], enemyarm[j], enemyimage[j]);
+                temp = (byte)rand.Next(3);
+                enemies[j] = new Enemy(_player.X + (j - 1), _player.Y + (j +1), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
                 _mapcoordinates[enemies[j].X, enemies[j].Y] = enemies[j].GetCoordinates();
                 _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j], 1);
             }  
@@ -106,10 +102,9 @@ namespace game
                     else if (_mapcoordinates[i, j].IsAlive==true)
                         foreach(Enemy enemy in enemies)
                         {
-                            if (i == enemy.X && j == enemy.Y) Console.Write(enemy.Image);
-                            else Console.WriteLine("Error");
+                            if (i == enemy.X && j == enemy.Y) Console.Write(enemy.Image);   
                         }
-
+                        
                     else if (j != _width - 1)
                     {
                         if (_map[i, j] == SolidTiles.Wall) Console.Write('#');
@@ -123,16 +118,25 @@ namespace game
                     
                 }
             }
-            Console.WriteLine("Your hp: {0}", _player.Hp);
+            Console.WriteLine("{0}'s hp: {1}",_player.Name, _player.Hp);
+            for (int i = 0; i<enemies.Length; i++)
+            {
+                if (enemies[i].Hp>0) 
+                Console.WriteLine("{0}'s hp: {1}", enemies[i].Name, enemies[i].Hp);
+            }
+            
         }
+
         private void PlayerMove() // movement
         {
             _player.Move(this);         
         }
+
         public SolidTiles CheckTile(int x, int y)
         {
             return _map[x, y];
         }
+
         public void Dead(int x,int y,int t) //changing alive status of the tile
         {
             if (t == 1)
@@ -140,10 +144,12 @@ namespace game
             else if (t == 2)
                 _mapcoordinates[x, y].IsAlive = false;
         }
+
         public LivingObject GiveObject(int x,int y)
         {
             return _mapcoordinates[x, y].GetCreature();
         }
+
         private void PlayerSpawn()// spawn a player at the center of a map
         {
             _player = new Player((_height / 2)-1, (_width / 2)-1);
@@ -152,6 +158,7 @@ namespace game
             
             
         }
+
        public void Change(int x,int y)
         {
             if (_mapcoordinates[x, y].IsAlive == true) _mapcoordinates[x, y].IsAlive = false;
@@ -159,17 +166,20 @@ namespace game
             else Console.WriteLine("Error in changing");
             
 
-        }     
+        }  
+        
         public bool CreatureCheck(int x,int y)
         { 
             if (_mapcoordinates[x, y].IsAlive)
                 return true;
             else return false;
         }
+
         public bool GetStatus(int x,int y)
         {
             return _mapcoordinates[x, y].IsAlive;
         }
+
         public void GameOver()
         {
             if (_player.IsAlive())
