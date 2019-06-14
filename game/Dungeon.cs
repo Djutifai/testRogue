@@ -64,12 +64,13 @@ namespace game
                 }
             }
            PlayerSpawn();
-           EnemyGen(rand.Next(5)+1);
+           EnemyGen(2);
 
             while (_isWorking) // game loop
             {
                 Print();
                 PlayerMove();
+                EnemyMove();
                 Console.Clear();
             }
         }
@@ -179,7 +180,13 @@ namespace game
         {
             return _mapcoordinates[x, y].IsAlive;
         }
-
+        private void EnemyMove()
+        {
+            foreach(Enemy enemy in enemies)
+            {
+                enemy.Ai(this,_player);
+            }
+        }
         public void GameOver()
         {
             if (_player.IsAlive())

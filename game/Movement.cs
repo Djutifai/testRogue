@@ -46,8 +46,6 @@ namespace game
             else if (dung.CheckTile(player.X + x, player.Y + y) != SolidTiles.Wall)
             {
                 Move(x, y, xy, dung);
-                
-
             }
             else Console.Write("Error in movement");
         }

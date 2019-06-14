@@ -8,7 +8,7 @@ namespace game
 {
     class Player : LivingObject
     {
-        private Movement _move = new Movement();
+        private Movement move = new Movement();
         public Player (int x, int y) : base("Boy",10,5,2,'@')
         {
             being = new XY(x, y, Image)
@@ -20,7 +20,7 @@ namespace game
 
         public void Move(Dungeon dung)
         {
-            _move.Move(being, dung, this);
+            move.Move(being, dung, this);
         }
         
         public bool IsAlive()
