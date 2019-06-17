@@ -40,20 +40,20 @@ namespace game
                 player.Attack(dung.GiveObject(player.X + x, player.Y + y));
                 if (player.Hp <= 0) dung.GameOver();
                 else if (dung.GiveObject(player.X + x, player.Y + y).Hp <= 0)
-                    Move(x, y, xy, dung);
+                    Move(x, y, xy, dung, player);
                 
             }
             else if (dung.CheckTile(player.X + x, player.Y + y) != SolidTiles.Wall)
             {
-                Move(x, y, xy, dung);
+                Move(x, y, xy, dung, player);
             }
             else Console.Write("Error in movement");
         }
-        private void Move(int x,int y,XY xy,Dungeon dung)
+        private void Move(int x, int y, XY xy, Dungeon dung, Player player)
         {
-            dung.Change(xy.X, xy.Y);
+            dung.Change(player.Being());
             xy.AddTo(x, y);
-            dung.Change(xy.X, xy.Y);
+            dung.Change(player.Being());
         }
     }
 }

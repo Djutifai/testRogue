@@ -59,7 +59,6 @@ namespace game
             if (enemy.Hp <= 0)
                 enemy.being.Die();
             
-            
         }
     }
 }

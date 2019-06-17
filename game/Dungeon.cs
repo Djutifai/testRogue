@@ -64,7 +64,7 @@ namespace game
                 }
             }
            PlayerSpawn();
-           EnemyGen(2);
+           EnemyGen(3);
 
             while (_isWorking) // game loop
             {
@@ -138,14 +138,6 @@ namespace game
             return _map[x, y];
         }
 
-        public void Dead(int x,int y,int t) //changing alive status of the tile
-        {
-            if (t == 1)
-                _mapcoordinates[x, y].IsAlive = true;
-            else if (t == 2)
-                _mapcoordinates[x, y].IsAlive = false;
-        }
-
         public LivingObject GiveObject(int x,int y)
         {
             return _mapcoordinates[x, y].GetCreature();
@@ -160,10 +152,10 @@ namespace game
             
         }
 
-       public void Change(int x,int y)
+        public void Change(XY being)
         {
-            if (_mapcoordinates[x, y].IsAlive == true) _mapcoordinates[x, y].IsAlive = false;
-            else if (_mapcoordinates[x, y].IsAlive == false) _mapcoordinates[x, y].IsAlive = true;
+            if (_mapcoordinates[being.X, being.Y].IsAlive == true) _mapcoordinates[being.X, being.Y].IsAlive = false;
+            else if (_mapcoordinates[being.X, being.Y].IsAlive == false) { _mapcoordinates[being.X, being.Y].IsAlive = true; _mapcoordinates[being.X, being.Y] = being; }
             else Console.WriteLine("Error in changing");
             
 
@@ -176,15 +168,13 @@ namespace game
             else return false;
         }
 
-        public bool GetStatus(int x,int y)
-        {
-            return _mapcoordinates[x, y].IsAlive;
-        }
+
         private void EnemyMove()
         {
             foreach(Enemy enemy in enemies)
             {
                 enemy.Ai(this,_player);
+                _mapcoordinates[enemy.X, enemy.Y] = enemy.GetCoordinates();
             }
         }
         public void GameOver()
