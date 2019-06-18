@@ -10,12 +10,9 @@ namespace game
     {
         private Player _player;
         private int _height, _width;
-        private XY _wall = new XY ();
-        private XY _empty = new XY();
         private bool _isWorking = true;
         private XY[,] _mapcoordinates;
         private SolidTiles[,] _map;
-        //Movement movement = new Movement();
         private Random rand = new Random();
         private byte temp;
         private Enemy[] enemies;
@@ -63,8 +60,8 @@ namespace game
                     _mapcoordinates[i, j] = new XY();
                 }
             }
-           PlayerSpawn();
-           EnemyGen(3);
+            PlayerSpawn();
+            EnemyGen(3);
 
             while (_isWorking) // game loop
             {
@@ -82,9 +79,8 @@ namespace game
             for (int j = 0; j < x; j++)
             {
                 temp = (byte)rand.Next(3);
-                enemies[j] = new Enemy(_player.X + (j - 1), _player.Y + (j +1), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
-                _mapcoordinates[enemies[j].X, enemies[j].Y] = enemies[j].GetCoordinates();
-                _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j], 1);
+                enemies[j] = new Enemy(_player.X + (j - temp), _player.Y + (j +temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
+                _mapcoordinates[enemies[j].X, enemies[j].Y].IsAlive = true;
             }  
             
             
@@ -103,7 +99,10 @@ namespace game
                     else if (_mapcoordinates[i, j].IsAlive==true)
                         foreach(Enemy enemy in enemies)
                         {
-                            if (i == enemy.X && j == enemy.Y) Console.Write(enemy.Image);   
+                            if (enemy.IsDead())
+                            {
+                                if (i == enemy.X && j == enemy.Y) Console.Write(enemy.Image);
+                            }
                         }
                         
                     else if (j != _width - 1)
@@ -143,38 +142,45 @@ namespace game
             return _mapcoordinates[x, y].GetCreature();
         }
 
-        private void PlayerSpawn()// spawn a player at the center of a map
-        {
-            _player = new Player((_height / 2)-1, (_width / 2)-1);
-            _mapcoordinates[(_height / 2)-1, (_width / 2)-1] = _player.GetCoordinates();
-            _mapcoordinates[_player.X, _player.Y].Creature(_player,1);
-            
-            
-        }
-
         public void Change(XY being)
         {
             if (_mapcoordinates[being.X, being.Y].IsAlive == true) _mapcoordinates[being.X, being.Y].IsAlive = false;
-            else if (_mapcoordinates[being.X, being.Y].IsAlive == false) { _mapcoordinates[being.X, being.Y].IsAlive = true; _mapcoordinates[being.X, being.Y] = being; }
+            else if (_mapcoordinates[being.X, being.Y].IsAlive == false)  _mapcoordinates[being.X, being.Y].IsAlive = true; 
             else Console.WriteLine("Error in changing");
             
 
         }  
         
+        public Enemy GiveEnemy(int x, int y)
+        {
+            foreach (Enemy enemy in enemies)
+            {
+                if (enemy.X == x && enemy.Y == y) { return enemy; }
+            }
+            return null;
+        }
         public bool CreatureCheck(int x,int y)
         { 
             if (_mapcoordinates[x, y].IsAlive)
                 return true;
             else return false;
         }
-
+        
+        private void PlayerSpawn()
+        {
+            _player = new Player((_height / 2) - 1, (_width / 2) - 1);
+            _mapcoordinates[_player.X, _player.Y].Creature(_player, 1);
+        }
 
         private void EnemyMove()
         {
             foreach(Enemy enemy in enemies)
             {
-                enemy.Ai(this,_player);
-                _mapcoordinates[enemy.X, enemy.Y] = enemy.GetCoordinates();
+                if (!enemy.IsDead())
+                {
+                    enemy.Ai(this, _player);
+                    _mapcoordinates[enemy.X, enemy.Y] = enemy.GetCoordinates();
+                }
             }
         }
         public void GameOver()

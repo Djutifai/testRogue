@@ -53,7 +53,7 @@ namespace game
         public void Die()
         {
             IsAlive = false;
-           
+            
         }
 
     }

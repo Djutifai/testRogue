@@ -9,6 +9,7 @@ namespace game
     class Movement
     {
         private ConsoleKey _move;
+
         public void Move(XY xy, Dungeon dung, Player player)
         {
             _move = Console.ReadKey().Key;
@@ -31,16 +32,16 @@ namespace game
                     break;
             }
         }
+
         private void Check(int x, int y, XY xy, Dungeon dung, Player player) // checking if there are a creature on a cell where player tries to move
         {
             
             if (dung.CreatureCheck(player.X+x,player.Y+y))
             {
                 
-                player.Attack(dung.GiveObject(player.X + x, player.Y + y));
-                if (player.Hp <= 0) dung.GameOver();
-                else if (dung.GiveObject(player.X + x, player.Y + y).Hp <= 0)
-                    Move(x, y, xy, dung, player);
+                player.Attack(dung, dung.GiveEnemy(player.X + x, player.Y + y));
+                if (player.Hp <= 0) { player.Die(dung); dung.GameOver(); }
+                else if (dung.GiveEnemy(player.X + x, player.Y + y) == null) Move(x, y, xy, dung, player);
                 
             }
             else if (dung.CheckTile(player.X + x, player.Y + y) != SolidTiles.Wall)
@@ -49,11 +50,12 @@ namespace game
             }
             else Console.Write("Error in movement");
         }
+
         private void Move(int x, int y, XY xy, Dungeon dung, Player player)
         {
-            dung.Change(player.Being());
+            dung.Change(player.being);
             xy.AddTo(x, y);
-            dung.Change(player.Being());
+            dung.Change(player.being);
         }
     }
 }

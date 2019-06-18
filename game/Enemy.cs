@@ -8,8 +8,9 @@ namespace game
 {
     class Enemy : LivingObject
     {
-        Random rand = new Random();
-        byte temp;
+        private Random rand = new Random();
+        private byte temp;
+        
         public Enemy(int x, int y, string name, int hp, int attack, int armor, char image)
         {
             Name = name;
@@ -22,10 +23,7 @@ namespace game
                 IsAlive = true
             };
         }
-        public bool Check()
-        {
-            return being.IsAlive;
-        }
+
         public void Ai(Dungeon dung, Player player)
         {
 
@@ -33,11 +31,11 @@ namespace game
                 if (5 > Math.Abs(player.X - being.X) && 5 > Math.Abs(player.Y - being.Y))
                 {
                     AiCheck(dung, player);
-                    MoveToPl(dung, player);
+                  //  MoveToPl(dung, player);
                 }
                 else if (5 < Math.Abs(player.X - being.X) && 5 < Math.Abs(player.Y - being.Y))
                 {
-                    RandBehave(dung);
+                   // RandBehave(dung);
                 }
         }
 
@@ -80,43 +78,41 @@ namespace game
 
         {
             temp = (byte)rand.Next(2);
-            if (temp==0)
+            if (temp == 0)
             {
                 if (being.X > player.X)
                 {
-                    if (dung.CheckTile(being.X-1, being.Y) != SolidTiles.Wall)
+                    if (dung.CheckTile(being.X - 1, being.Y) != SolidTiles.Wall)
                     {
-                        if (dung.CreatureCheck(being.X - 1, being.Y))
+                        if (!dung.CreatureCheck(being.X - 1, being.Y))
                         {
                             dung.Change(being);
                             being.X--;
                             dung.Change(being);
-                             being.Creature(this, 1);
                         }
                     }
                 }
                 else if (being.X < player.X)
                 {
-                    if (dung.CheckTile(being.X+1, being.Y) != SolidTiles.Wall)
+                    if (dung.CheckTile(being.X + 1, being.Y) != SolidTiles.Wall)
                     {
-                        if (dung.CreatureCheck(being.X + 1, being.Y))
+                        if (!dung.CreatureCheck(being.X + 1, being.Y))
                         {
                             dung.Change(being);
                             being.X++;
                             dung.Change(being);
-                              being.Creature(this, 1);
                         }
                     }
                 }
             }
-            else if (temp==1)
+            else if (temp == 1)
             {
 
                 if (being.Y > player.Y)
                 {
                     if (dung.CheckTile(being.X, being.Y - 1) != SolidTiles.Wall)
                     {
-                        if (dung.CreatureCheck(being.X, being.Y - 1))
+                        if (!dung.CreatureCheck(being.X, being.Y - 1))
                         {
                             dung.Change(being);
                             being.Y--;
@@ -124,12 +120,12 @@ namespace game
                         }
                     }
                 }
-                
-                else if (being.Y<player.Y)
+
+                else if (being.Y < player.Y)
                 {
                     if (dung.CheckTile(being.X, being.Y + 1) != SolidTiles.Wall)
                     {
-                        if (dung.CreatureCheck(being.X, being.Y + 1))
+                        if (!dung.CreatureCheck(being.X, being.Y + 1))
                         {
                             dung.Change(being);
                             being.Y++;
@@ -138,7 +134,7 @@ namespace game
                     }
                 }
             }
-            
+
 
         }
 
@@ -152,19 +148,17 @@ namespace game
                 dung.Change(being);
                 being.Creature(this, 1);
             }
-        }   
+        }
 
         private void RandBehave(Dungeon dung)
         {
             temp = (byte)(rand.Next(5) + 1);
             if (temp == 1)
             {
-
                 Move(1, 1, dung);
             }
 
-
-
         }
+
     }
 }

@@ -13,7 +13,8 @@ namespace game
         public int Atk { get; set; }
         public int Arm { get; set; }
         public char Image { get; set; }
-        protected XY being;
+        private bool deathStatus = true;
+        public XY being { get; protected set; }
         public LivingObject (string name,int hp,int attack,int armor,char image)
         {
             Name = name;
@@ -31,33 +32,52 @@ namespace game
         }
         public int X => being.X;
         public int Y => being.Y;
+
         
-        public void Attack (LivingObject enemy)
+        public void Attack (Dungeon dung, LivingObject enemy)
         {
-            if (enemy.Arm -Atk <0)
+            if (enemy == null)
             {
-                enemy.Hp = enemy.Hp + enemy.Arm - Atk;
-                if (enemy.Hp >= 0)
+            }
+            else
+            {
+                if (enemy.Arm - Atk > 0)
                 {
-                    if (Arm - enemy.Atk < 0)
-                        Hp = Hp + Arm - enemy.Atk;
-                    else if (Arm - enemy.Atk >= 0)
-                        Hp = Hp - 1;
+                    enemy.Hp = enemy.Hp + enemy.Arm - Atk;
+                    if (enemy.Hp >= 0)
+                    {
+                        if (Arm - enemy.Atk > 0)
+                            Hp = Hp + Arm - enemy.Atk;
+                        else if (Arm - enemy.Atk <= 0)
+                            Hp = Hp - 1;
+                    }
+                }
+                else if (enemy.Arm - Atk <= 0)
+                {
+                    enemy.Hp = enemy.Hp - 1;
+                    if (enemy.Hp >= 0)
+                    {
+                        if (Arm - enemy.Atk > 0)
+                            Hp = Hp + Arm - enemy.Atk;
+                        else if (Arm - enemy.Atk <= 0)
+                            Hp = Hp - 1;
+                    }
+                }
+                if (enemy.Hp <= 0)
+                {
+                    enemy.Die(dung);
                 }
             }
-            else if (enemy.Arm-Atk==0)
-            {
-                enemy.Hp = enemy.Hp - 1;
-                if (enemy.Hp >= 0)
-                {
-                    if (Arm - enemy.Atk < 0)
-                        Hp = Hp + Arm - enemy.Atk;
-                    else if (Arm - enemy.Atk >= 0)
-                        Hp = Hp - 1;
-                }
-            }
-            if (enemy.Hp <= 0)
-                enemy.being.Die();
+        }
+        public bool IsDead()
+        {
+            return deathStatus;
+        }
+        public void Die(Dungeon dung)
+        {
+            being.Die();
+            deathStatus = true;
+            dung.Change(being);
             
         }
     }
