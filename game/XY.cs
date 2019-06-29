@@ -12,11 +12,11 @@ namespace game
         public int Y { get; set; }
         public bool IsAlive { get; set; }
         private LivingObject creature;
-        public XY()
+        public XY()  // non-creature constructor (using in the mapArray)
         {
             IsAlive = false;
         }
-        public XY(int x, int y,char image)
+        public XY(int x, int y,char image) //creature constructor
         {
             X = x;
             Y = y;
@@ -33,18 +33,10 @@ namespace game
             X += x;
             Y += y;
         }
-        public void Creature(LivingObject creature,int x)
+        public void Creature(LivingObject creature)
         {
             this.creature = creature;
-            if (x == 1) IsAlive = true;
-            else if (x == 0) IsAlive = false;
-            else Console.Write("Error");
-        }
-        public void Creature(int x)
-        {
-            creature = new LivingObject();
-            if (x == 0) IsAlive = false;
-            else Console.Write("Error");
+            IsAlive = true;
         }
         public LivingObject GetCreature()
         {

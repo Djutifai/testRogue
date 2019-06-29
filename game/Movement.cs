@@ -10,52 +10,60 @@ namespace game
     {
         private ConsoleKey _move;
 
-        public void Move(XY xy, Dungeon dung, Player player)
+        public void PlMove(Dungeon dung, Player player)
         {
             _move = Console.ReadKey().Key;
             switch (_move)
             {
                 case ConsoleKey.UpArrow:
 
-                    Check(-1, 0, xy, dung, player); // move up
+                    Check(-1, 0, dung, player); // move up
                     break;
                 case ConsoleKey.DownArrow:
-                    Check(+1, 0, xy, dung, player); // move down
+                    Check(+1, 0, dung, player); // move down
                     break;
                 case ConsoleKey.LeftArrow:
-                    Check(0, -1, xy, dung, player); // move left 
+                    Check(0, -1, dung, player); // move left 
                     break;
                 case ConsoleKey.RightArrow:
-                    Check(0, +1, xy, dung, player); // move right
+                    Check(0, +1, dung, player); // move right
                     break;
                 default:
                     break;
             }
         }
-
-        private void Check(int x, int y, XY xy, Dungeon dung, Player player) // checking if there are a creature on a cell where player tries to move
+        private void Check(int x, int y, Dungeon dung, LivingObject creature) // checking if there are a creature on a cell where player tries to move
         {
             
-            if (dung.CreatureCheck(player.X+x,player.Y+y))
+            if (dung.CreatureCheck(creature.X+x,creature.Y+y))
             {
-                
-                player.Attack(dung, dung.GiveEnemy(player.X + x, player.Y + y));
-                if (player.Hp <= 0) { player.Die(dung); dung.GameOver(); }
-                else if (dung.GiveEnemy(player.X + x, player.Y + y) == null) Move(x, y, xy, dung, player);
-                
+                creature.Attack(dung, dung.GetEnemyAtCoordinates(creature.X + x, creature.Y + y),1);
+                if (creature.Hp <= 0)
+                {
+                    creature.Die(dung);
+                    dung.GameOver();
+                }
+                else if (!dung.CreatureCheck(creature.X + x, creature.Y + y))
+                    Move(x, y, dung, creature);  
             }
-            else if (dung.CheckTile(player.X + x, player.Y + y) != SolidTiles.Wall)
+            else
             {
-                Move(x, y, xy, dung, player);
+                Move(x, y, dung, creature);
             }
-            else Console.Write("Error in movement");
         }
 
-        private void Move(int x, int y, XY xy, Dungeon dung, Player player)
+        protected void Move(int x, int y, Dungeon dung, LivingObject creature) // Basic movement method for a livingobject
         {
-            dung.Change(player.being);
-            xy.AddTo(x, y);
-            dung.Change(player.being);
+            if (!dung.CreatureCheck(creature.X + x, creature.Y + y)) //checking if there are no creatures on a cell
+            {
+                if (dung.CheckTile(creature.X + x, creature.Y + y) != SolidTiles.Wall) 
+                {
+                    dung.Change(creature.Being);    //Changing creature's current XY cell alive status to the opposite (making it not alive)
+                    creature.Being.AddTo(x, y);     //Changing coordinates of a creature 
+                    dung.Change(creature.Being);    //Changing to the opposite again but with updated creature's XY (making it alive)
+                }
+                else Console.Write("Error in movement");
+            }
         }
     }
 }

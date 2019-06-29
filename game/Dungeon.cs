@@ -17,9 +17,9 @@ namespace game
         private byte temp;
         private Enemy[] enemies;
         private readonly string[] enemyname = new string[] { "rat", "spider", "zombie" };
-        private readonly int[] enemyhp = new int[] { 3, 4, 6 };
-        private readonly int[] enemyatk = new int[] { 4, 3, 2 };
-        private readonly int[] enemyarm = new int[] { 1, 1, 3 };
+        private readonly byte[] enemyhp = new byte[] { 3, 4, 6 };
+        private readonly byte[] enemyatk = new byte[] { 4, 3, 2 };
+        private readonly byte[] enemyarm = new byte[] { 1, 1, 3 };
         private readonly char[] enemyimage = new char[] { 'r', 's', 'z' };
 
         public void Start() // Initializing
@@ -29,22 +29,20 @@ namespace game
             Console.Write("Choose the width of our dungeon: ");
             int width = Convert.ToInt32(Console.ReadLine());
             Console.Clear();
-            _height = height+2;
-            _width = width+2;
+            _height = height + 2;
+            _width = width + 2;
             _map = new SolidTiles[_height, _width];
             _mapcoordinates = new XY[_height, _width];
-            RoomGen();      
+            RoomGen();
         }
 
         private void RoomGen() // generation of a room
         {
-            
-            
-            for (int i = 0;i<_height;i++)
+            for (int i = 0; i < _height; i++)
             {
                 for (int j = 0; j < _width; j++)
                 {
-                    
+
                     if (i == 0 || i == _height - 1)
                     {
 
@@ -61,75 +59,61 @@ namespace game
                 }
             }
             PlayerSpawn();
-            EnemyGen(3);
+            EnemyGen(2);
 
             while (_isWorking) // game loop
             {
                 Print();
-                PlayerMove();
-                EnemyMove();
+                _player.Move(this); //player movement
+                EnemyMove();        
                 Console.Clear();
             }
         }
 
-        private void EnemyGen(int x) // generating random amount of enemies (right now there are 3 type of an enemy)
-        {
-            enemies = new Enemy[x];
-            
-            for (int j = 0; j < x; j++)
-            {
-                temp = (byte)rand.Next(3);
-                enemies[j] = new Enemy(_player.X + (j - temp), _player.Y + (j +temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
-                _mapcoordinates[enemies[j].X, enemies[j].Y].IsAlive = true;
-            }  
-            
-            
-        }
-      
         private void Print() // printing the dungeon
         {
             for (int i = 0; i < _height; i++)
             {
                 for (int j = 0; j < _width; j++)
                 {
-                    
-                    if (i == _player.X && j == _player.Y) Console.Write(_player.Image); 
+
+                    if (i == _player.X && j == _player.Y) Console.Write(_player.Image);
 
 
-                    else if (_mapcoordinates[i, j].IsAlive==true)
-                        foreach(Enemy enemy in enemies)
+                    else if (_mapcoordinates[i, j].IsAlive == true)
+                        foreach (Enemy enemy in enemies)
                         {
-                            if (enemy.IsDead())
+                            if (!enemy.IsDead())
                             {
                                 if (i == enemy.X && j == enemy.Y) Console.Write(enemy.Image);
                             }
                         }
-                        
+
                     else if (j != _width - 1)
                     {
                         if (_map[i, j] == SolidTiles.Wall) Console.Write('#');
-                        else if (_map[i, j] == SolidTiles.Floor) Console.Write(' ');
+                        else if (_map[i, j] == SolidTiles.Floor) Console.Write('.');
                     }
 
                     else if (j == _width - 1)
                     {
                         Console.WriteLine('#');
                     }
-                    
                 }
+                
             }
-            Console.WriteLine("{0}'s hp: {1}",_player.Name, _player.Hp);
-            for (int i = 0; i<enemies.Length; i++)
-            {
-                if (enemies[i].Hp>0) 
-                Console.WriteLine("{0}'s hp: {1}", enemies[i].Name, enemies[i].Hp);
-            }
-            
-        }
 
-        private void PlayerMove() // movement
-        {
-            _player.Move(this);         
+            for (int i = 0; i < _height; i++)
+                for (int j = 0; j < _width; j++)
+                    if (_mapcoordinates[i, j].IsAlive == true)
+                        Console.WriteLine("{0} {1} is alive", i, j);
+            Console.WriteLine("{0}'s hp: {1}", _player.Name, _player.Hp);
+
+            for (int i = 0; i < enemies.Length; i++)
+            {
+                if (enemies[i].Hp > 0)
+                    Console.WriteLine("{0}'s hp: {1}", enemies[i].Name, enemies[i].Hp);
+            }
         }
 
         public SolidTiles CheckTile(int x, int y)
@@ -137,21 +121,21 @@ namespace game
             return _map[x, y];
         }
 
-        public LivingObject GiveObject(int x,int y)
+        public LivingObject GiveObject(int x, int y)
         {
             return _mapcoordinates[x, y].GetCreature();
         }
 
-        public void Change(XY being)
+        public void Change(XY being) //changing the alive status of the XY cell 
         {
-            if (_mapcoordinates[being.X, being.Y].IsAlive == true) _mapcoordinates[being.X, being.Y].IsAlive = false;
-            else if (_mapcoordinates[being.X, being.Y].IsAlive == false)  _mapcoordinates[being.X, being.Y].IsAlive = true; 
+            if (_mapcoordinates[being.X, being.Y].IsAlive == true)
+                _mapcoordinates[being.X, being.Y].IsAlive = false;
+            else if (_mapcoordinates[being.X, being.Y].IsAlive == false)
+                _mapcoordinates[being.X, being.Y].IsAlive = true;
             else Console.WriteLine("Error in changing");
-            
+        }
 
-        }  
-        
-        public Enemy GiveEnemy(int x, int y)
+        public Enemy GetEnemyAtCoordinates(int x, int y)
         {
             foreach (Enemy enemy in enemies)
             {
@@ -159,30 +143,43 @@ namespace game
             }
             return null;
         }
-        public bool CreatureCheck(int x,int y)
-        { 
+
+        public bool CreatureCheck(int x, int y)
+        {
             if (_mapcoordinates[x, y].IsAlive)
                 return true;
             else return false;
         }
-        
-        private void PlayerSpawn()
+
+        private void PlayerSpawn() //spawning player at the left top corner
         {
-            _player = new Player((_height / 2) - 1, (_width / 2) - 1);
-            _mapcoordinates[_player.X, _player.Y].Creature(_player, 1);
+            _player = new Player(2, 2);
+            _mapcoordinates[_player.X, _player.Y].Creature(_player);
         }
 
-        private void EnemyMove()
+        private void EnemyGen(int x) // generating random amount of random enemies (right now there are 3 type of an enemy)
         {
-            foreach(Enemy enemy in enemies)
+            enemies = new Enemy[x];
+
+            for (int j = 0; j < x; j++)
+            {
+                temp = (byte)rand.Next(3);
+                enemies[j] = new Enemy(_height/2+ (j - temp), _width/2+ (j + temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
+                _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j]);
+            }
+        }
+
+        private void EnemyMove() //loop for all enemies to make a move
+        {
+            foreach (Enemy enemy in enemies)
             {
                 if (!enemy.IsDead())
                 {
                     enemy.Ai(this, _player);
-                    _mapcoordinates[enemy.X, enemy.Y] = enemy.GetCoordinates();
                 }
             }
         }
+
         public void GameOver()
         {
             if (_player.IsAlive())
