@@ -4,6 +4,9 @@
 - [x] Combat system
 - [x] AI
 - [ ] Interactive objects (chests, doors, stairs etc.)
-- [ ] Procedural generation of a dungeon
-
+ - [x] Chests
+ - [x] Doors
+ - [ ] Stairs
+- [ ] Procedural generation of a dungeon (Semi-done)
+ 
 ##### There might be some new goals, but all of the big stuff will be started and finished in a project that I already mentioned before.

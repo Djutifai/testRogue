@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace game
+namespace testRogue
 {
     class Movement
     {
@@ -28,11 +28,14 @@ namespace game
                 case ConsoleKey.RightArrow:
                     Check(0, +1, dung, player); // move right
                     break;
+                case ConsoleKey.Z:
+                    player.Interact(player.X,player.Y,dung, player);
+                    break;
                 default:
                     break;
             }
         }
-        private void Check(int x, int y, Dungeon dung, LivingObject creature) // checking if there are a creature on a cell where player tries to move
+        private void Check(int x, int y, Dungeon dung, Player creature) // checking if there are a creature on a cell where player tries to move
         {
             
             if (dung.CreatureCheck(creature.X+x,creature.Y+y))
@@ -50,17 +53,17 @@ namespace game
             {
                 Move(x, y, dung, creature);
             }
-        }
+        }   
 
         protected void Move(int x, int y, Dungeon dung, LivingObject creature) // Basic movement method for a livingobject
         {
             if (!dung.CreatureCheck(creature.X + x, creature.Y + y)) //checking if there are no creatures on a cell
             {
-                if (dung.CheckTile(creature.X + x, creature.Y + y) != SolidTiles.Wall) 
+                if (dung.CheckTile(creature.X + x, creature.Y + y) != SolidTiles.Wall&&!dung.InteractiveCheck(creature.X+x,creature.Y+y)) 
                 {
-                    dung.Change(creature.Being);    //Changing creature's current XY cell alive status to the opposite (making it not alive)
+                    dung.Change(creature.Being);    //Making creature's current XY cell not alive
                     creature.Being.AddTo(x, y);     //Changing coordinates of a creature 
-                    dung.Change(creature.Being);    //Changing to the opposite again but with updated creature's XY (making it alive)
+                    dung.Change(creature.Being);    //Making updated creature's XY cell alive
                 }
                 else Console.Write("Error in movement");
             }

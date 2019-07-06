@@ -43,8 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DunGen.cs" />
     <Compile Include="Dungeon.cs" />
     <Compile Include="Enemy.cs" />
+    <Compile Include="Interaction.cs" />
     <Compile Include="LivingObject.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Player.cs" />

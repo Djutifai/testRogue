@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace testRogue
 {
-    public enum SolidTiles :byte {Floor, Wall }
+    public enum Interaction : byte { OpenedDoor, ClosedDoor, OpenedChest, ClosedChest, UpLadder, DownLadder, None }
 }

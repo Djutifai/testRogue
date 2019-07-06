@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace game
+namespace testRogue
 {
     class LivingObject : Movement
     {
@@ -53,13 +53,10 @@ namespace game
                 }
                 if (type == 1)
                 {
-                    if (enemy.Hp >= 0)
-                    {
                         if (Arm - enemy.Atk >= 0)
                             Hp = Hp - 1;
                         else if (Arm - enemy.Atk < 0)
                             Hp = Hp + Arm - enemy.Atk;
-                    }
                 }
                 if (enemy.Hp <= 0)
                 { 

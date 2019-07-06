@@ -4,77 +4,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace game
+namespace testRogue
 {
-    class Dungeon
+    class Dungeon : DunGen
     {
         private Player _player;
-        private int _height, _width;
         private bool _isWorking = true;
-        private XY[,] _mapcoordinates;
-        private SolidTiles[,] _map;
-        private Random rand = new Random();
         private byte temp;
         private Enemy[] enemies;
-        private readonly string[] enemyname = new string[] { "rat", "spider", "zombie" };
-        private readonly byte[] enemyhp = new byte[] { 3, 4, 6 };
-        private readonly byte[] enemyatk = new byte[] { 4, 3, 2 };
-        private readonly byte[] enemyarm = new byte[] { 1, 1, 3 };
+        private string[] ChestContainer= new string[] { "Sword", "Scroll", "Apple" };
+        private readonly string[] enemyname= new string[] { "rat", "spider", "zombie" };
+        private readonly int[] enemyhp = new int[] { 3, 4, 6 };
+        private readonly int[] enemyatk = new int[] { 4, 3, 2 };
+        private readonly int[] enemyarm= new int[] { 1, 1, 3 };
         private readonly char[] enemyimage = new char[] { 'r', 's', 'z' };
 
         public void Start() // Initializing
         {
-            Console.Write("Choose the height of our dungeon: ");
-            int height = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Choose the width of our dungeon: ");
-            int width = Convert.ToInt32(Console.ReadLine());
-            Console.Clear();
-            _height = height + 2;
-            _width = width + 2;
-            _map = new SolidTiles[_height, _width];
-            _mapcoordinates = new XY[_height, _width];
-            RoomGen();
-        }
-
-        private void RoomGen() // generation of a room
-        {
-            for (int i = 0; i < _height; i++)
-            {
-                for (int j = 0; j < _width; j++)
-                {
-
-                    if (i == 0 || i == _height - 1)
-                    {
-
-                        _map[i, j] = SolidTiles.Wall;
-                    }
-                    else if (i != 0 && i != _height - 1)
-                    {
-                        if (j != 0 && j != _width - 1) { _map[i, j] = SolidTiles.Floor; }
-                        else { _map[i, j] = SolidTiles.Wall; }
-
-                    }
-                    else Console.WriteLine("Error");
-                    _mapcoordinates[i, j] = new XY();
-                }
-            }
+            Generation(this);
             PlayerSpawn();
-            EnemyGen(2);
-
+          //  EnemyGen(2);
+            ChestGen();
             while (_isWorking) // game loop
             {
                 Print();
                 _player.Move(this); //player movement
-                EnemyMove();        
+                //EnemyMove();        
                 Console.Clear();
             }
         }
 
-        private void Print() // printing the dungeon
+        private void Print() // printing the dungeon including all objects in their current state 
         {
-            for (int i = 0; i < _height; i++)
+            for (int i = 0; i < _map.GetLength(0); i++)
             {
-                for (int j = 0; j < _width; j++)
+                for (int j = 0; j < _map.GetLength(1) ; j++)
                 {
 
                     if (i == _player.X && j == _player.Y) Console.Write(_player.Image);
@@ -88,14 +52,17 @@ namespace game
                                 if (i == enemy.X && j == enemy.Y) Console.Write(enemy.Image);
                             }
                         }
-
-                    else if (j != _width - 1)
+                    else if (_mapcoordinates[i,j].GetInteraction()!=Interaction.None)
+                    {
+                        ObjPrint(i, j);
+                    }
+                    else if (j != _map.GetLength(0) - 1)
                     {
                         if (_map[i, j] == SolidTiles.Wall) Console.Write('#');
                         else if (_map[i, j] == SolidTiles.Floor) Console.Write('.');
                     }
 
-                    else if (j == _width - 1)
+                    else if (j == _map.GetLength(0) - 1)
                     {
                         Console.WriteLine('#');
                     }
@@ -103,19 +70,15 @@ namespace game
                 
             }
 
-            for (int i = 0; i < _height; i++)
-                for (int j = 0; j < _width; j++)
-                    if (_mapcoordinates[i, j].IsAlive == true)
-                        Console.WriteLine("{0} {1} is alive", i, j);
             Console.WriteLine("{0}'s hp: {1}", _player.Name, _player.Hp);
-
-            for (int i = 0; i < enemies.Length; i++)
+          /*  for (int i = 0; i < enemies.Length; i++)
             {
                 if (enemies[i].Hp > 0)
                     Console.WriteLine("{0}'s hp: {1}", enemies[i].Name, enemies[i].Hp);
-            }
+            }*/
+            _player.DisplayItems();
         }
-
+        
         public SolidTiles CheckTile(int x, int y)
         {
             return _map[x, y];
@@ -134,7 +97,7 @@ namespace game
                 _mapcoordinates[being.X, being.Y].IsAlive = true;
             else Console.WriteLine("Error in changing");
         }
-
+        
         public Enemy GetEnemyAtCoordinates(int x, int y)
         {
             foreach (Enemy enemy in enemies)
@@ -144,13 +107,25 @@ namespace game
             return null;
         }
 
-        public bool CreatureCheck(int x, int y)
+        public Interaction GiveInteraction(int x, int y)
+        {
+            return _mapcoordinates[x, y].GetInteraction();
+        }
+
+        public bool InteractiveCheck(int x, int y) 
+        {
+            if (_mapcoordinates[x, y].GetInteraction() == Interaction.None||_mapcoordinates[x,y].GetInteraction()==Interaction.OpenedDoor)
+                return false;
+            else return true;
+        }
+
+        public bool CreatureCheck(int x, int y) 
         {
             if (_mapcoordinates[x, y].IsAlive)
                 return true;
             else return false;
         }
-
+        
         private void PlayerSpawn() //spawning player at the left top corner
         {
             _player = new Player(2, 2);
@@ -164,9 +139,20 @@ namespace game
             for (int j = 0; j < x; j++)
             {
                 temp = (byte)rand.Next(3);
-                enemies[j] = new Enemy(_height/2+ (j - temp), _width/2+ (j + temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
+                enemies[j] = new Enemy(_map.GetLength(0)/2+ (j - temp), _map.GetLength(0)/2+ (j + temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
                 _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j]);
             }
+        }
+
+        public void OpenInteraction(int x, int y)
+        {
+            _mapcoordinates[x, y].OpenInteraction();
+        }
+
+        public string GiveItem(int x, int y)
+        {
+            _mapcoordinates[x, y].OpenInteraction();
+            return ChestContainer[rand.Next(3)];
         }
 
         private void EnemyMove() //loop for all enemies to make a move
@@ -178,6 +164,31 @@ namespace game
                     enemy.Ai(this, _player);
                 }
             }
+        }
+
+        private void ChestGen()
+        {
+            temp = (byte)rand.Next(7, 15);
+            _mapcoordinates[temp, 10].InteractionChest();
+            temp = (byte)rand.Next(5, 10);
+            _mapcoordinates[temp, 7].InteractionChest();
+        }
+
+        private void ObjPrint(int x, int y) // printing Interactive Objects
+        {
+            if (_mapcoordinates[x, y].GetInteraction() == Interaction.ClosedChest)
+                Console.Write('~');
+            else if (_mapcoordinates[x, y].GetInteraction() == Interaction.OpenedChest)
+                Console.Write('-');
+            else if (_mapcoordinates[x, y].GetInteraction() == Interaction.OpenedDoor)
+                Console.Write('`');
+            else if (_mapcoordinates[x, y].GetInteraction() == Interaction.ClosedDoor)
+                Console.Write('+');
+            else if (_mapcoordinates[x, y].GetInteraction() == Interaction.UpLadder)
+                Console.Write('<');
+            else if (_mapcoordinates[x, y].GetInteraction() == Interaction.DownLadder)
+                Console.Write('>');
+            else Console.WriteLine("Error");
         }
 
         public void GameOver()
