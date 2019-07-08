@@ -10,13 +10,21 @@ namespace testRogue
     {
         // Цели:
         //      ᛫ Сделать адекватный алгоритм деления подземелия + тут же усовершенствовать проверку на дверь, если дверь встречается - стена рисуется по соседству
-        //      ᛫ Напихать сундуки, врагов (спавн врагов также должен производиться НЕ В СТЕНКЕ
+        //      ᛫ Напихать сундуки, врагов (спавн врагов также должен производиться НЕ В СТЕНКЕ)
         //      ᛫ Реализовать переход на следующий уровень, с сохранением предыдущего в его current state (массив солидтайлов, скорее всего)
         protected SolidTiles[,] _map = new SolidTiles[50,50];
         protected Random rand = new Random();
         protected XY[,] _mapcoordinates = new XY[50, 50];
         private int room, i, temp;
         private bool isHorizontal = true;
+        protected SolidTiles[,] _mapSaver1 = new SolidTiles[50, 50];
+        protected SolidTiles[,] _mapSaver2 = new SolidTiles[50, 50];
+        protected SolidTiles[,] _mapSaver3 = new SolidTiles[50, 50];
+        protected SolidTiles[,] _mapSaver4 = new SolidTiles[50, 50];
+        protected XY[,] _mapCoordinatesSaver1 = new XY[50, 50];
+        protected XY[,] _mapCoordinatesSaver2 = new XY[50, 50];
+        protected XY[,] _mapCoordinatesSaver3 = new XY[50, 50];
+        protected XY[,] _mapCoordinatesSaver4 = new XY[50, 50];
         protected void Generation(Dungeon dung) // algorythm for the procedural generation
         {
             room = rand.Next(10, 15);
@@ -42,22 +50,26 @@ namespace testRogue
                 }
             }
             //x = _map.GetLength(0) / 2 - rand.Next(-5, 5);
-            //room = rand.Next(10, 15);
-            int[] horizontal = new int[3]; // arrays for cut points
-            int[] vertical = new int[3];   // 
+            Console.Write("Enter desired amount of rooms: ");
+            room = Convert.ToInt32(Console.ReadLine());
+            int[] horizontal = new int[room/2]; // arrays for cut points
+            int[] vertical = new int[room/2];   // 
             int arrayhelper1 = 0;
             int arrayhelper2 = 0;
             horizontal[arrayhelper1] = (_map.GetLength(0) / 2) - rand.Next(-2, 2); 
             vertical[arrayhelper2] = (_map.GetLength(1) / 2) + rand.Next(-1, 1);
-            for (int r = 0; r < 4; r++) // now here is where room starts to show up
+            for (int r = 0; r < room; r++) // now here is where room starts to show up
             {
                 i = 1;
                 if (isHorizontal) // checking if it should be the horizontal or vertical cut of the dungeon
                 {
-                    while (dung.CheckTile(horizontal[arrayhelper1], i) != SolidTiles.Wall && dung.GiveInteraction(horizontal[arrayhelper1],i)!=Interaction.ClosedDoor)
+                    while (dung.CheckTile(horizontal[arrayhelper1], i) != SolidTiles.Wall)
                     {
-                        _map[horizontal[arrayhelper1], i] = SolidTiles.Wall;
-                        i++;
+                        if (dung.GiveInteraction(horizontal[arrayhelper1], i) != Interaction.ClosedDoor)
+                        {
+                            _map[horizontal[arrayhelper1], i] = SolidTiles.Wall;
+                            i++;
+                        }
                     }
                     temp = rand.Next(5, i);
                     _map[horizontal[arrayhelper1], temp] = SolidTiles.Floor;
@@ -68,10 +80,13 @@ namespace testRogue
                 }
                 else if (!isHorizontal)
                 {
-                    while (dung.CheckTile(i,vertical[arrayhelper2])!=SolidTiles.Wall&&dung.GiveInteraction(i,vertical[arrayhelper2])!=Interaction.ClosedDoor)
+                    while (dung.CheckTile(i,vertical[arrayhelper2])!=SolidTiles.Wall)
                     {
-                        _map[i, vertical[arrayhelper2]] = SolidTiles.Wall;
-                        i++;
+                        if (dung.GiveInteraction(i, vertical[arrayhelper2]) != Interaction.ClosedDoor)
+                        {
+                            _map[i, vertical[arrayhelper2]] = SolidTiles.Wall;
+                            i++;
+                        }
                     }
                     temp = rand.Next(5, i);
                     _map[temp, vertical[arrayhelper2]] = SolidTiles.Floor;

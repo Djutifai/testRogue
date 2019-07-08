@@ -35,6 +35,7 @@ namespace testRogue
                     break;
             }
         }
+
         private void Check(int x, int y, Dungeon dung, Player creature) // checking if there are a creature on a cell where player tries to move
         {
             
@@ -49,17 +50,24 @@ namespace testRogue
                 else if (!dung.CreatureCheck(creature.X + x, creature.Y + y))
                     Move(x, y, dung, creature);  
             }
+            else if (dung.GiveInteraction(creature.X+x,creature.Y+y)==Interaction.UpLadder||dung.GiveInteraction(creature.X+x,creature.Y+y)==Interaction.DownLadder)
+            {
+                if (dung.GiveInteraction(creature.X + x, creature.Y + y) == Interaction.UpLadder)
+                    creature.NextLvl(dung, +1);
+                else if (dung.GiveInteraction(creature.X + x, creature.Y + y) == Interaction.DownLadder)
+                    creature.NextLvl(dung, -1);
+            }
             else
             {
                 Move(x, y, dung, creature);
             }
         }   
-
+         
         protected void Move(int x, int y, Dungeon dung, LivingObject creature) // Basic movement method for a livingobject
         {
             if (!dung.CreatureCheck(creature.X + x, creature.Y + y)) //checking if there are no creatures on a cell
             {
-                if (dung.CheckTile(creature.X + x, creature.Y + y) != SolidTiles.Wall&&!dung.InteractiveCheck(creature.X+x,creature.Y+y)) 
+                if (dung.CheckTile(creature.X + x, creature.Y + y) != SolidTiles.Wall&&!dung.InteractiveCheck(creature.X+x,creature.Y+y))
                 {
                     dung.Change(creature.Being);    //Making creature's current XY cell not alive
                     creature.Being.AddTo(x, y);     //Changing coordinates of a creature 

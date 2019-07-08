@@ -9,6 +9,7 @@ namespace testRogue
     class Dungeon : DunGen
     {
         private Player _player;
+        private int currentLevel = 1;
         private bool _isWorking = true;
         private byte temp;
         private Enemy[] enemies;
@@ -106,7 +107,60 @@ namespace testRogue
             }
             return null;
         }
-
+        public void LoadMap(int x)
+        {
+            if (x==1)
+            {
+                currentLevel = 1;
+                _map = _mapSaver1;
+                _mapcoordinates = _mapCoordinatesSaver1;
+            }
+            else if (x == 2)
+            {
+                currentLevel = 2;
+                _map = _mapSaver2;
+                _mapcoordinates = _mapCoordinatesSaver2;
+            }
+            else if (x == 3)
+            {
+                currentLevel = 3;
+                _map = _mapSaver3;
+                _mapcoordinates = _mapCoordinatesSaver3;
+            }
+            else if (x == 4)
+            {
+                currentLevel = 4;
+                _map = _mapSaver4;
+                _mapcoordinates = _mapCoordinatesSaver4;
+            }
+        }
+        public int GetLevel()
+        {
+            return currentLevel;
+        }
+        public void SaveMap()
+        {
+            if (currentLevel == 1)
+            {
+                _mapSaver1 = _map;
+                _mapCoordinatesSaver1 = _mapcoordinates;
+            }
+            else if (currentLevel == 2)
+            {
+                _mapSaver2 = _map;
+                _mapCoordinatesSaver2 = _mapcoordinates;
+            }
+            else if (currentLevel == 3)
+            {
+                _mapSaver4 = _map;
+                _mapCoordinatesSaver3 = _mapcoordinates;
+            }
+            else if (currentLevel == 4)
+            {
+                _map = _mapSaver4;
+                _mapcoordinates = _mapCoordinatesSaver4;
+            }
+        }
         public Interaction GiveInteraction(int x, int y)
         {
             return _mapcoordinates[x, y].GetInteraction();
@@ -139,16 +193,32 @@ namespace testRogue
             for (int j = 0; j < x; j++)
             {
                 temp = (byte)rand.Next(3);
-                enemies[j] = new Enemy(_map.GetLength(0)/2+ (j - temp), _map.GetLength(0)/2+ (j + temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
-                _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j]);
+                if (CheckTile(_map.GetLength(0) / 2 + (j - temp), _map.GetLength(0) / 2 + (j + temp)) != SolidTiles.Wall)
+                {
+                    enemies[j] = new Enemy(_map.GetLength(0) / 2 + (j - temp), _map.GetLength(0) / 2 + (j + temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
+                    _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j]);
+                }
+                else
+                {
+                    enemies[j] = new Enemy(_map.GetLength(0) / 2 + (j ), _map.GetLength(0) / 2 + (j -temp), enemyname[temp], enemyhp[temp], enemyatk[temp], enemyarm[temp], enemyimage[temp]);
+                    _mapcoordinates[enemies[j].X, enemies[j].Y].Creature(enemies[j]);
+                }
             }
         }
-
         public void OpenInteraction(int x, int y)
         {
             _mapcoordinates[x, y].OpenInteraction();
         }
-
+        public bool CheckIfFirst() //checking if the level is first-time entered and needs to be generated
+        {
+            if (_mapcoordinates[0, 0].IsFirst == true)
+            {
+                Generation(this);
+                _mapcoordinates[0, 0].IsFirst = false;
+                return true;
+            }
+            else return false;
+        }
         public string GiveItem(int x, int y)
         {
             _mapcoordinates[x, y].OpenInteraction();

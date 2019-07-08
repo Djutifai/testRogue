@@ -15,6 +15,7 @@ namespace testRogue
         public char Image { get; set; }
         private bool isDead = false;
         public XY Being { get; protected set; }
+
         public LivingObject (string name,int hp,int attack,int armor,char image)
         {
             Name = name;
@@ -23,9 +24,11 @@ namespace testRogue
             Arm = armor;
             Image = image;
         }
+
         public LivingObject()
         {
         }
+
         public XY GetCoordinates()
         {
             return Being;
@@ -64,16 +67,17 @@ namespace testRogue
                 }
             }
         }
+
         public bool IsDead()
         {
             return isDead;
         }
+
         public void Die(Dungeon dung)
         {
             Being.Die();
             isDead = true;
-            dung.Change(Being);
-            
+            dung.Change(Being);  
         }
         
     }

@@ -10,6 +10,7 @@ namespace testRogue
     {
         private string[] inventory = new string[5];
         private int temp = 0;
+
         public Player (int x, int y) : base("Boy",10,5,1,'@')
         {
             Being = new XY(x, y, Image)
@@ -17,7 +18,6 @@ namespace testRogue
                 IsAlive = true
             };
         }
-        
         //Interacting with an object in all 4 directions from player
         public void Interact(int x, int y, Dungeon dung, Player creature)
         {
@@ -28,7 +28,7 @@ namespace testRogue
                 {
                     creature.NewItem(dung.GiveItem(x + i, y));
                 }
-                else if (dung.GiveInteraction(x + i, y) == Interaction.ClosedDoor)
+                else if (dung.GiveInteraction(x + i, y) == Interaction.ClosedDoor||dung.GiveInteraction(x+i,y)==Interaction.OpenedDoor)
                 {
                     dung.OpenInteraction(x + i, y);
                 }
@@ -41,25 +41,36 @@ namespace testRogue
                 {
                     creature.NewItem(dung.GiveItem(x, y + j));
                 }
-                else if (dung.GiveInteraction(x , y + j) == Interaction.ClosedDoor)
+                else if (dung.GiveInteraction(x , y + j) == Interaction.ClosedDoor||dung.GiveInteraction(x,y+j)==Interaction.OpenedDoor)
                 {
                     dung.OpenInteraction(x , y + j);
                 }
             }
         }
+
+        public void NextLvl(Dungeon dung, int x)
+        {
+            dung.SaveMap();
+            dung.LoadMap(dung.GetLevel()+x);
+            dung.CheckIfFirst();
+        }
+
         public void Move(Dungeon dung)
         {
             PlMove(dung, this);
         }
+
         public bool IsAlive()
         {
             return Being.IsAlive;
         }
+
         public void DisplayItems()
         {
             for (int i = 0; i < temp; i++)
                 Console.WriteLine("You have an item {0}", inventory[i]);
         }
+
         public void NewItem(string item)
         {
             if (temp < 5)

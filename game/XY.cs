@@ -12,6 +12,7 @@ namespace testRogue
         public int Y { get; set; }
         public bool IsAlive { get; set; }
         private LivingObject creature;
+        public bool IsFirst { get; set; }
         private Interaction cell = new Interaction();
         public XY()  // non-creature constructor (using in the mapArray)
         {
@@ -41,7 +42,6 @@ namespace testRogue
                 cell = Interaction.OpenedDoor;
             else if (cell == Interaction.OpenedDoor)
                 cell = Interaction.ClosedDoor;
-            
         }
         public Interaction GetInteraction()
         {
