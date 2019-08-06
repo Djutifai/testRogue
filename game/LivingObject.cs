@@ -62,7 +62,7 @@ namespace testRogue
                             Hp = Hp + Arm - enemy.Atk;
                 }
                 if (enemy.Hp <= 0)
-                { 
+                {
                     enemy.Die(dung);
                 }
             }
@@ -77,8 +77,8 @@ namespace testRogue
         {
             Being.Die();
             isDead = true;
-            dung.Change(Being);  
+            dung.Change(Being);
         }
-        
+
     }
 }

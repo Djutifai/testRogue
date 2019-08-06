@@ -48,7 +48,7 @@ namespace testRogue
             }
         }
 
-        public void NextLvl(Dungeon dung, int x)
+        private void NextLvl(Dungeon dung, int x)
         {
             dung.SaveMap();
             dung.LoadMap(dung.GetLevel()+x);
