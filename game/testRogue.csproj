@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{749E1BEE-85A7-4003-B79A-13DAF44BCF13}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>game</RootNamespace>
-    <AssemblyName>game</AssemblyName>
+    <RootNamespace>testRogue</RootNamespace>
+    <AssemblyName>testRogue</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,13 +46,15 @@
     <Compile Include="DunGen.cs" />
     <Compile Include="Dungeon.cs" />
     <Compile Include="Enemy.cs" />
-    <Compile Include="Interaction.cs" />
-    <Compile Include="LivingObject.cs" />
+    <Compile Include="Containers.cs" />
+    <Compile Include="Enum\Interaction.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="Entity.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolidTiles.cs" />
+    <Compile Include="Enum\SolidTiles.cs" />
     <Compile Include="XY.cs" />
   </ItemGroup>
   <ItemGroup>

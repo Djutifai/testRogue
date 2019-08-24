@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace testRogue
 {
-    class Player : LivingObject
+    class Player : Entity
     {
-        private string[] inventory = new string[5];
+        private string[] inventory1 = new string[5];
         private int temp = 0;
+        private Item[] inventory = new Item[10];
 
         public Player (int x, int y) : base("Boy",10,5,1,'@')
         {
-            Being = new XY(x, y, Image)
+            Being = new XY(x, y)
             {
                 IsAlive = true
             };
@@ -22,7 +23,7 @@ namespace testRogue
         public void Interact(int x, int y, Dungeon dung, Player creature)
         {
 
-            for (int i = -1; i < 2; i = i + 2)
+            for (int i = -1; i < 2; i += 2)
             {
                 if (dung.GiveInteraction(x + i, y) == Interaction.ClosedChest)
                 {
@@ -48,11 +49,10 @@ namespace testRogue
             }
         }
 
-        private void NextLvl(Dungeon dung, int x)
+        public void NextLvl(Dungeon dung, int x)
         {
             dung.SaveMap();
             dung.LoadMap(dung.GetLevel()+x);
-            dung.CheckIfFirst();
         }
 
         public void Move(Dungeon dung)
@@ -67,15 +67,16 @@ namespace testRogue
 
         public void DisplayItems()
         {
-            for (int i = 0; i < temp; i++)
-                Console.WriteLine("You have an item {0}", inventory[i]);
+            foreach (Item item in inventory)
+                if (item!=null)Console.WriteLine("You have an item: {0}", item.GetName());
         }
 
-        public void NewItem(string item)
+        public void NewItem(Item item)
         {
-            if (temp < 5)
+            if (temp < 10)
             {
                 inventory[temp] = item;
+                inventory[temp].AddStats(this);
                 temp++;
             }
         }

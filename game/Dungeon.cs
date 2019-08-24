@@ -8,27 +8,49 @@ namespace testRogue
 {
     class Dungeon : DunGen
     {
-        //fix непонятный фриз уммммаляю)
+        
         private Player _player;
-        
+        private int currentLevel = 1;
         private bool _isWorking = true;
-        private byte temp;
 
+        private bool _isPaused = false;
         
-        public void Start() // Initializing
+        public void Start(Player player) // Initializing
         {
+            _player = player;
+            
             Generation(this);
-            PlayerSpawn();
+            PlayerSpawn(_player);
             while (_isWorking) // game loop
             {
-                
+                while (_isPaused)
+                {
+
+                }
+                Print();
                 _player.Move(this); //player movement
                 EnemyMove();
                 Console.Clear();
+                
             }
         }
-        
-           
+
+        private void Print() // printing string array full of symbols
+        {
+            MakingMap();
+            Console.WriteLine(stringMap);
+            stringMap = "";
+
+            Console.WriteLine("{0}'s hp: {1}", _player.Name, _player.Hp);
+            for (int i = 0; i < enemies.GetLength(1); i++)
+            {
+                if (enemies[currentLevel-1, i].Hp > 0)
+                    Console.WriteLine("{0}'s hp: {1}", enemies[currentLevel-1, i].Name, enemies[currentLevel-1, i].Hp);
+            }
+            _player.DisplayItems();
+        }
+
+
         public SolidTiles CheckTile(int x, int y)
         {
             return _mapTiles[x, y];
@@ -43,17 +65,40 @@ namespace testRogue
                 _mapcoordinates[being.X, being.Y].IsAlive = true;
             else Console.WriteLine("Error in changing");
         }
-        
+
+        private void MakingMap() // Adding all char's to the string array
+        {
+            for (int i = 0; i < _mapTiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < _mapTiles.GetLength(1); j++)
+                {
+
+                    if (i == _player.X && j == _player.Y) stringMap += '@';
+
+
+                    else if (_mapcoordinates[i, j].IsAlive == true)
+                        for(int k = 0; k<enemies.GetLength(1);k++)
+                        {
+                            if(enemies[currentLevel-1,k].X==i&&enemies[currentLevel-1,k].Y==j)
+                                stringMap += enemies[currentLevel-1, k].Image;
+                        }
+                    else ObjPrint(i, j);
+
+                }
+                stringMap += "\n";
+
+            }
+        }
         public Enemy GetEnemyAtCoordinates(int x, int y)
         {
-            foreach (Enemy enemy in enemies)
+            for (int i =0; i <enemies.GetLength(1);i++)
             {
-                if (enemy.X == x && enemy.Y == y) { return enemy; }
+                if (enemies[currentLevel-1, i].X == x && enemies[currentLevel-1, i].Y == y) return enemies[currentLevel-1, i];
             }
             return null;
         }
 
-        protected void LoadMap(int x)
+        public void LoadMap(int x)
         {
             if (x==1)
             {
@@ -79,20 +124,34 @@ namespace testRogue
                 _mapTiles = _mapSaver4;
                 _mapcoordinates = _mapCoordinatesSaver4;
             }
-            
+            CheckIfFirst();
+            _mapcoordinates[_player.X, _player.Y].IsAlive = true;
+            for (int i = 0; i < enemies.GetLength(1); i++)
+            {
+                _mapcoordinates[enemies[currentLevel - 1, i].X, enemies[currentLevel - 1, i].Y].IsAlive = true;
+            }
         }
+        public void OpenInventory()
+        {
+            _isPaused = true;
+        }
+        
+        private void InventoryDraw()
+        {
+            Console.Clear();
 
-        protected int GetLevel()
+        }
+        public int GetLevel()
         {
             return currentLevel;
         }
-
-        protected void SaveMap()
+       
+        public void SaveMap()
         {
             _mapcoordinates[_player.X, _player.Y].IsAlive = false;
-            foreach(Enemy enemy in enemies)
+            for (int i=0;i<enemies.GetLength(1); i++)
             {
-                _mapcoordinates[enemy.X, enemy.Y].IsAlive = false;
+                _mapcoordinates[enemies[currentLevel-1,i].X, enemies[currentLevel-1,i].Y].IsAlive = false;
             }
             if (currentLevel == 1)
             {
@@ -133,45 +192,34 @@ namespace testRogue
                 return true;
             else return false;
         }
-        
-        private void PlayerSpawn() //spawning player at the left top corner
-        {
-            _player = new Player(2, 2);
-            _mapcoordinates[_player.X, _player.Y].IsAlive = true;
-        }
-
-        
+              
         public void OpenInteraction(int x, int y)
         {
             _mapcoordinates[x, y].OpenInteraction(); 
         }
+
         public void CheckIfFirst() //checking if the level is first-time entered and needs to be generated
         {
             if (_mapcoordinates[0, 0] == null)
             {
                 Generation(this);
-                _mapcoordinates[0, 0].IsFirst = false;
-                _mapcoordinates[_player.X, _player.Y].IsAlive = true;
-                foreach (Enemy enemy in enemies)
-                    _mapcoordinates[enemy.X, enemy.Y].IsAlive = true;
             }
 
         }
-        public string GiveItem(int x, int y)
+        public Item GiveItem(int x, int y)
         {
             _mapcoordinates[x, y].OpenInteraction();
-            return ChestContainer[rand.Next(3)];
+            return chestContainer[rand.Next(5)];
         }
 
         private void EnemyMove() //loop for all enemies to make a move
         {
-            foreach (Enemy enemy in enemies)
+            for (int i = 0; i < enemies.GetLength(1); i++)
             {
-                if (!enemy.IsDead())
-                {
-                    enemy.Ai(this, _player);
-                }
+                if (!enemies[currentLevel-1,i].IsDead())
+                    enemies[currentLevel-1, i].Ai(this, _player);
             }
+            
         }
  
 

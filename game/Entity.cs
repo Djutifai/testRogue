@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace testRogue
 {
-    class LivingObject : Movement
+    class Entity : Movement
     {
         public string Name { get; set; }
         public int Hp { get; set;}
@@ -16,7 +16,7 @@ namespace testRogue
         private bool isDead = false;
         public XY Being { get; protected set; }
 
-        public LivingObject (string name,int hp,int attack,int armor,char image)
+        public Entity (string name,int hp,int attack,int armor,char image)
         {
             Name = name;
             Hp = hp;
@@ -25,13 +25,8 @@ namespace testRogue
             Image = image;
         }
 
-        public LivingObject()
+        public Entity()
         {
-        }
-
-        public XY GetCoordinates()
-        {
-            return Being;
         }
         public int X => Being.X;
         public int Y => Being.Y;
@@ -41,7 +36,7 @@ namespace testRogue
         /// <param name="dung"></param>
         /// <param name="enemy">target of the attack</param>
         /// <param name="type">If 0 - attack without taking damage and 1 for a classic combat (attack -> take damage) </param>
-        public void Attack (Dungeon dung, LivingObject enemy, byte type)
+        public void Attack (Dungeon dung, Entity enemy, byte type)
         {
             if (enemy == null) {}
             else

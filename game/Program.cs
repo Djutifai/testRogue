@@ -10,8 +10,9 @@ namespace testRogue
     {
         static void Main(string[] args)
         {
+            Player player = new Player(2, 2);
             Dungeon dung = new Dungeon();
-            dung.Start();
+            dung.Start(player);
         }
     }
 }

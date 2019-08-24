@@ -31,6 +31,9 @@ namespace testRogue
                 case ConsoleKey.Z:
                     player.Interact(player.X,player.Y,dung, player);
                     break;
+                case ConsoleKey.Q:
+                    dung.OpenInventory();
+                    break;
                 default:
                     break;
             }
@@ -63,7 +66,7 @@ namespace testRogue
             }
         }   
          
-        protected void Move(int x, int y, Dungeon dung, LivingObject creature) // Basic movement method for a livingobject
+        protected void Move(int x, int y, Dungeon dung, Entity creature) // Basic movement method for a livingobject
         {
             if (!dung.CreatureCheck(creature.X + x, creature.Y + y)) //checking if there are no creatures on a cell
             {

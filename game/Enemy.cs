@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace testRogue
 {
-    class Enemy : LivingObject
+    class Enemy : Entity
     {
         private Random rand = new Random();
         private byte temp;
@@ -18,7 +18,20 @@ namespace testRogue
             Atk = attack;
             Arm = armor;
             Image = image;
-            Being = new XY(x, y, image)
+            Being = new XY(x, y)
+            {
+                IsAlive = true
+            };
+        }
+
+        public Enemy(string name, int hp, int attack, int armor, char image)
+        {
+            Name = name;
+            Hp = hp;
+            Atk = attack;
+            Arm = armor;
+            Image = image;
+            Being = new XY(0, 0)
             {
                 IsAlive = true
             };

@@ -18,9 +18,8 @@ namespace testRogue
         {
             cell = Interaction.None;
             IsAlive = false;
-            IsFirst = true;
         }
-        public XY(int x, int y,char image) //creature constructor
+        public XY(int x, int y) //creature constructor
         {
             cell = Interaction.None;
             X = x;
